@@ -1,0 +1,77 @@
+import axios from "axios";
+
+const BASE_URL = "https://www.googleapis.com/youtube/v3";
+const API_KEY = "AIzaSyBIRyoySfAkD0ZTgl7dC9UvBQt28H-jrOk";
+
+export enum ORDER_BY {
+	DATE = "date",
+	RATING = "rating",
+	RELEVANCE = "relevance",
+}
+
+interface Thumbnail {
+	height: number;
+	url: string;
+	width: number;
+}
+
+export interface SearchResult {
+	channelId: string;
+	channelTitle: string;
+	commentCount: string;
+	description: string;
+	liveBroadcastContent: string;
+	publishTime: string;
+	publishedAt: string;
+	thumbnails: {
+		default: Thumbnail;
+		medium: Thumbnail;
+		high: Thumbnail;
+	};
+	title: string;
+}
+
+export const getSearchResults = async (
+	searchTerm: string,
+	orderBy?: string
+) => {
+	try {
+		const { data } = await axios.get(`${BASE_URL}/search`, {
+			params: {
+				key: API_KEY,
+				part: "snippet",
+				type: "video",
+				q: searchTerm,
+				...(orderBy && {
+					order: orderBy,
+				}),
+			},
+		});
+		const items = await Promise.all(
+			data.items.map(async (item: any) => {
+				const commentCount = await getNumVideoComments(item.id.videoId);
+				return { ...item.snippet, commentCount } as SearchResult;
+			})
+		);
+		console.log(items);
+		return items;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const getNumVideoComments = async (videoId: string) => {
+	try {
+		const { data } = await axios.get(`${BASE_URL}/videos`, {
+			params: {
+				key: API_KEY,
+				part: "statistics",
+				id: videoId,
+			},
+		});
+		const commentCount = data.items[0].statistics.commentCount;
+		return commentCount;
+	} catch (error) {
+		console.error(error);
+	}
+};
