@@ -1,5 +1,5 @@
 import Card from './Card';
 import Search from './Search';
-import SearchResults from './SearchResults';
+import SearchResultCard from './SearchResultCard';
 
-export { Card, Search, SearchResults };
+export { Card, Search, SearchResultCard };

@@ -16,7 +16,7 @@ interface Thumbnail {
 }
 
 export interface SearchResult {
-  link: string;
+	link: string;
 	channelId: string;
 	channelTitle: string;
 	commentCount: string;
@@ -32,28 +32,27 @@ export interface SearchResult {
 	title: string;
 }
 
-export const getSearchResults = async (
-	searchTerm: string,
-	orderBy?: string
-) => {
+export const getSearchResults = async (searchTerm: string, orderBy: string) => {
 	try {
 		const { data } = await axios.get(`${BASE_URL}/search`, {
 			params: {
 				key: API_KEY,
 				part: "snippet",
-        type: "video",
-        maxResults: 50,
+				type: "video",
+				maxResults: 50,
 				q: searchTerm,
-				...(orderBy && {
-					order: orderBy,
-				}),
+				order: orderBy,
 			},
 		});
 		const items = await Promise.all(
 			data.items.map(async (item: any) => {
-        const videoId = item.id.videoId;
-        const commentCount = await getNumVideoComments(videoId);
-				return { link: `http://youtu.be/${videoId}`, ...item.snippet, commentCount } as SearchResult;
+				const videoId = item.id.videoId;
+				const commentCount = await getNumVideoComments(videoId);
+				return {
+					link: `http://youtu.be/${videoId}`,
+					...item.snippet,
+					commentCount,
+				} as SearchResult;
 			})
 		);
 		return items;
