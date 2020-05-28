@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const BASE_URL = "https://www.googleapis.com/youtube/v3";
-const API_KEY = "AIzaSyBIRyoySfAkD0ZTgl7dC9UvBQt28H-jrOk";
+const API_KEY = "AIzaSyBHFEYpu7lrGgFLqq-3RdM4CW5xQ3Ryk1c";
 
 export enum ORDER_BY {
 	DATE = "Date",
@@ -56,7 +56,6 @@ export const getSearchResults = async (
 				return { link: `http://youtu.be/${videoId}`, ...item.snippet, commentCount } as SearchResult;
 			})
 		);
-		console.log(items);
 		return items;
 	} catch (error) {
 		console.error(error);

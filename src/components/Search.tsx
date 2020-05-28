@@ -1,7 +1,7 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useCallback } from "react";
 import { TextInput, Box } from "grommet";
 import { ORDER_BY, getSearchResults } from "../api/utils";
-// import { debounce } from "lodash"; /* add debounce for getting search results */
+import { debounce } from "lodash";
 
 interface SearchProps {
 	setSearchResults: React.Dispatch<React.SetStateAction<undefined>>;
@@ -11,16 +11,19 @@ const Search: FC<SearchProps> = ({ setSearchResults }) => {
 	const [searchValue, setSearchValue] = useState("");
 	const [orderByValue, setOrderByValue] = useState(ORDER_BY.DATE);
 
-	useEffect(() => {
-		async function search() {
+	const debouncedSearch = useCallback(
+		debounce(async () => {
 			const results = await getSearchResults(searchValue, orderByValue);
 			setSearchResults(results as any);
-    };
-    
+		}, 700),
+		[]
+	);
+
+	useEffect(() => {
 		if (searchValue) {
-			search();
+			debouncedSearch();
 		}
-	}, [searchValue, orderByValue, setSearchResults]);
+	}, [searchValue, orderByValue, debouncedSearch]);
 
 	return (
 		<Box direction="row">
