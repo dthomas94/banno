@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Header, Main } from 'grommet';
+import { Box, Main, Header } from 'grommet';
 import {Search, SearchResults} from './components';
 
 const App = () => {
@@ -7,7 +7,7 @@ const App = () => {
 
   return (
     <Box>
-      <Header>
+      <Header width="100%" justify="center">
         <Search setSearchResults={setSearchResults} />
       </Header>
       <Main>

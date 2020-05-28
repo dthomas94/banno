@@ -11,6 +11,7 @@ const Card: FC<{}> = ({ children }) => {
       round="5px"
       justify="between"
       alignContent="center"
+      margin={{vertical: "5px"}}
 		>
 			{children}
 		</Box>

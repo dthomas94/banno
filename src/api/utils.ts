@@ -4,9 +4,9 @@ const BASE_URL = "https://www.googleapis.com/youtube/v3";
 const API_KEY = "AIzaSyBIRyoySfAkD0ZTgl7dC9UvBQt28H-jrOk";
 
 export enum ORDER_BY {
-	DATE = "date",
-	RATING = "rating",
-	RELEVANCE = "relevance",
+	DATE = "Date",
+	RATING = "Rating",
+	RELEVANCE = "Relevance",
 }
 
 interface Thumbnail {
@@ -16,6 +16,7 @@ interface Thumbnail {
 }
 
 export interface SearchResult {
+  link: string;
 	channelId: string;
 	channelTitle: string;
 	commentCount: string;
@@ -40,7 +41,8 @@ export const getSearchResults = async (
 			params: {
 				key: API_KEY,
 				part: "snippet",
-				type: "video",
+        type: "video",
+        maxResults: 50,
 				q: searchTerm,
 				...(orderBy && {
 					order: orderBy,
@@ -49,8 +51,9 @@ export const getSearchResults = async (
 		});
 		const items = await Promise.all(
 			data.items.map(async (item: any) => {
-				const commentCount = await getNumVideoComments(item.id.videoId);
-				return { ...item.snippet, commentCount } as SearchResult;
+        const videoId = item.id.videoId;
+        const commentCount = await getNumVideoComments(videoId);
+				return { link: `http://youtu.be/${videoId}`, ...item.snippet, commentCount } as SearchResult;
 			})
 		);
 		console.log(items);
